@@ -105,5 +105,3 @@ def visual_word_description(step_size = 150, cell_size = 3, visualize = True):
 
 if __name__ == '__main__':
     visual_word_description();
-    
-    
