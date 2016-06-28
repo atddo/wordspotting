@@ -4,5 +4,3 @@ def visual_word_description():
 
 if __name__ == '__main__':
     visual_word_description();
-    
-    
