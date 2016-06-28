@@ -1,6 +1,6 @@
-def document_level():
+def visual_word_description():
     
     raise NotImplementedError('Implement me')
 
 if __name__ == '__main__':
-    document_level();
+    visual_word_description();
