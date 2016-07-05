@@ -67,7 +67,6 @@ def visual_word_description(document_image_filename, step_size, cell_size, n_cen
     # Da das Zeichnen der 4x4 Zellen fuer jeden Deskriptor viel Performance kosten
     # kann, ist es moeglich es ueber das Flag draw_descriptor_cells abzuschalten.
     #
-    print labels
     if visualize:
         draw_descriptor_cells = True
         fig = plt.figure()
