@@ -19,11 +19,9 @@ from scipy import misc
 from collections import defaultdict
 
 
-def visual_word_description(step_size = 150, cell_size = 3, visualize = True):
+def visual_word_description(document_image_filename, step_size, cell_size, n_centroids, visualize = True):
 
    
-    #
-    document_image_filename = '../../george_washington_files/2710271.png'
     image = Image.open(document_image_filename)
     # Fuer spaeter folgende Verarbeitungsschritte muss das Bild mit float32-Werten vorliegen. 
     im_arr = np.asarray(image, dtype='float32')
@@ -58,9 +56,8 @@ def visual_word_description(step_size = 150, cell_size = 3, visualize = True):
     #    sich auf den aehnlichsten Centroiden aus dem Codebuch (labels).
     #
     # Die Abbildung von Deskriptoren auf Centroiden (Visual Words) bezeichnet man als Quantisierung.
-    n_centroids = 40 
-    _, labels = kmeans2(desc, n_centroids, iter=20, minit='points')
-
+    
+    centroids, labels = kmeans2(desc, n_centroids, iter=20, minit='points')
     #
     # Die Deskriptoren und deren Quantisierung werden nun visualisiert. Zu jedem 
     # Deskriptor werden dazu die Mittelpunkte und die 4x4 Zellen eingezeichnet.
@@ -70,6 +67,7 @@ def visual_word_description(step_size = 150, cell_size = 3, visualize = True):
     # Da das Zeichnen der 4x4 Zellen fuer jeden Deskriptor viel Performance kosten
     # kann, ist es moeglich es ueber das Flag draw_descriptor_cells abzuschalten.
     #
+    print labels
     if visualize:
         draw_descriptor_cells = True
         fig = plt.figure()
@@ -96,12 +94,14 @@ def visual_word_description(step_size = 150, cell_size = 3, visualize = True):
         
         plt.show()
     
-    
-    
-    
-    
-
+    # Centroids: Eine Liste von Zentroiden (Auch SWIFT Operatoren!)
+    # Labels: Fuer jeden SWIFT Operator ist ein Index vorhanden, der angibt, zu welchem Zentroid der Operator zugeordnet ist.
+    # ORDNUNG: Spaltenweise von oben nach unten und links nach rechts. Beispiel:
+    # 1 4 7
+    # 2 5 8
+    # 3 6 9
+    return centroids, labels
 
 
 if __name__ == '__main__':
-    visual_word_description();
+    visual_word_description('../../george_washington_files/2710271.png', 150, 15, 5);
