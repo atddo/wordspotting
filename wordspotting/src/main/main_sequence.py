@@ -10,14 +10,16 @@ sift_n_classes = 5
 
 patch_width = 300
 patch_height = 75
-patch_hop_size = 25 
+patch_hop_size = 25
+
+visualize_progress=True 
 
 searchfile = '../../george_washington_files/2700270.png'
 image = Image.open(searchfile)
 # Fuer spaeter folgende Verarbeitungsschritte muss das Bild mit float32-Werten vorliegen. 
 im_arr = np.asarray(image, dtype='float32')
 dimensions = im_arr.shape
-print dimensions
+
 # 1043 671 1443 765 companies
 groundtrouth = (1043, 671, 1443, 765, "companies")
 distance_to_end_x = dimensions[0]- groundtrouth[2]
@@ -29,11 +31,12 @@ query = (groundtrouth[0] - (patch_width - min(distance_to_end_x, patch_width)),
          )
 
 query_im = im_arr[query[1]:query[3], query[0]:query[2]]
-plt.imshow(query_im, cmap=cm.get_cmap('Greys_r'))
-plt.show()
+if visualize_progress:
+    plt.imshow(query_im, cmap=cm.get_cmap('Greys_r'))
+    plt.show()
 
 siftcalc = document_level.main.SiftCalculator(sift_step_size, sift_cell_size, sift_n_classes)
-centroids, labels = siftcalc.calculate_visual_words_for_document(searchfile, visualize = True)
+centroids, labels = siftcalc.calculate_visual_words_for_document(searchfile, visualize = visualize_progress)
 
 
 print labels

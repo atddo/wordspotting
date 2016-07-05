@@ -108,8 +108,6 @@ class SiftCalculator(object):
         # 3 6 9
         self.centroids = centroids
         labels = np.reshape(labels,(1+int((im_arr.shape[0]-(1.5*self.cell_size))/self.step_size),-1),order='F')
-
-        
         return centroids, labels
 
 
