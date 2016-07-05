@@ -14,7 +14,7 @@ class TopicFeatureTransform(object):
         # Transformation muss in der estimate Methode definiert werden.
         self.__T = None
         self.__S_inv = None
-        a=1
+        a=0
        
         
     def estimate(self, train_data, train_labels):
