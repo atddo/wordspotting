@@ -25,10 +25,10 @@ class SiftCalculator(object):
         self.cell_size = cell_size
         self.n_centroids = n_centroids
         self.centroids = None
-    def calculate_visual_words_for_query(self, query_image_filename, visualize = False):
-        image = Image.open(query_image_filename)
+    def calculate_visual_words_for_query(self, query_image, visualize = False):
+
         # Fuer spaeter folgende Verarbeitungsschritte muss das Bild mit float32-Werten vorliegen. 
-        im_arr = np.asarray(image, dtype='float32')
+        im_arr = query_image
         # Die colormap legt fest wie die Intensitaetswerte interpretiert werden.
         if visualize:
             plt.imshow(im_arr, cmap=cm.get_cmap('Greys_r'))

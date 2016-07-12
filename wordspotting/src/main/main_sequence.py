@@ -8,15 +8,18 @@ import latent_semantic_indexing.TopicFeatureTransform
 from latent_semantic_indexing.TopicFeatureTransform import TopicFeatureTransform
 from compiler.pyassem import FLAT
 from tables.table import Column
-sift_step_size = 25
+from scipy.spatial.distance import cdist
+
+sift_step_size = 30
 sift_cell_size = 15
 sift_n_classes = 50
 
 patch_width = 300
-patch_height = 75
+patch_height =300
 patch_hop_size = 100
+metric = 'cosine'
 
-flatten_dimensions = 100
+flatten_dimensions = 5
 
 visualize_progress=False 
 
@@ -43,7 +46,7 @@ if visualize_progress:
 
 siftcalc = document_level.main.SiftCalculator(sift_step_size, sift_cell_size, sift_n_classes)
 centroids, labels = siftcalc.calculate_visual_words_for_document(searchfile, visualize = visualize_progress)
-
+query_sift = siftcalc.calculate_visual_words_for_query(query_im, visualize=visualize_progress)
 
 print labels
 fvd = patch_level.main.feature_vector_descriptor(patch_width, patch_height, patch_hop_size, patch_hop_size,sift_step_size, sift_cell_size, sift_n_classes)
@@ -53,19 +56,23 @@ pyramid_mat = np.zeros_like(patch_mat)
 for column in range(pyramid_mat.shape[1]):
     for row in range(pyramid_mat.shape[0]):
         pyramid_mat[row,column] = fvd.spatial_pyramid(patch_mat[row,column])
+        
+query_pyramid = fvd.spatial_pyramid(query_sift)
+
 tft = TopicFeatureTransform(flatten_dimensions)
 flat_pyramid_mat=np.array([v for i in pyramid_mat for v in i])
 
 tft.estimate(flat_pyramid_mat)
 mat_shape = pyramid_mat.shape
-print len(flat_pyramid_mat)
-print mat_shape
-transfomed_array=tft.transform(flat_pyramid_mat)
-transformed_mat = np.zeros_like(pyramid_mat)
 
-for column in range(mat_shape[1]):
-    for row in range(mat_shape[0]):
-        transformed_mat[row,column]= transfomed_array[column*mat_shape[0]+row]
+transfomed_array=tft.transform(flat_pyramid_mat)
+transformed_query = tft.transform(np.array(query_pyramid))
+
+distances_array = cdist(transfomed_array, np.array([transformed_query]), metric=metric)
+
+distances_mat = distances_array.reshape(mat_shape)
+
+
 
 
 
