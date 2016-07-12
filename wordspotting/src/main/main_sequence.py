@@ -3,16 +3,16 @@ import numpy as np
 import Image
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-
-sift_step_size = 150
+import patch_level.main
+sift_step_size = 100
 sift_cell_size = 15
-sift_n_classes = 5
+sift_n_classes = 50
 
 patch_width = 300
-patch_height = 75
-patch_hop_size = 25
+patch_height = 175
+patch_hop_size = 100
 
-visualize_progress=True 
+visualize_progress=False 
 
 searchfile = '../../george_washington_files/2700270.png'
 image = Image.open(searchfile)
@@ -40,7 +40,8 @@ centroids, labels = siftcalc.calculate_visual_words_for_document(searchfile, vis
 
 
 print labels
-
+fvd = patch_level.main.feature_vector_descriptor(patch_width, patch_height, patch_hop_size, patch_hop_size,sift_step_size, sift_cell_size)
+print fvd.patch_mat(dimensions[0], dimensions[1], labels, sift_cell_size, sift_step_size)
 
 
 

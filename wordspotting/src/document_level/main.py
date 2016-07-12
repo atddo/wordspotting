@@ -112,5 +112,5 @@ class SiftCalculator(object):
 
 
 if __name__ == '__main__':
-    siftcalc = SiftCalculator( 150, 15, 5)
+    siftcalc = SiftCalculator( 80, 15, 5)
     siftcalc.calculate_visual_words_for_document('../../george_washington_files/2710271.png', visualize = True)
