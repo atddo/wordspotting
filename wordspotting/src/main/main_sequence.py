@@ -4,12 +4,12 @@ import Image
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import patch_level.main
-sift_step_size = 50
+sift_step_size = 5
 sift_cell_size = 15
 sift_n_classes = 50
 
 patch_width = 300
-patch_height = 200
+patch_height = 75
 patch_hop_size = 100
 
 visualize_progress=False 
@@ -41,12 +41,8 @@ centroids, labels = siftcalc.calculate_visual_words_for_document(searchfile, vis
 
 print labels
 fvd = patch_level.main.feature_vector_descriptor(patch_width, patch_height, patch_hop_size, patch_hop_size,sift_step_size, sift_cell_size, sift_n_classes)
-patch_mat = fvd.patch_mat(dimensions[1], dimensions[0], labels, sift_cell_size, sift_step_size)
+pyramid_mat = fvd.patch_mat(dimensions[1], dimensions[0], labels, sift_cell_size, sift_step_size)
 
-pyramid_mat = np.zeros_like(patch_mat)
-for column in range(pyramid_mat.shape[1]):
-    for row in range(pyramid_mat.shape[0]):
-        pyramid_mat[row,column] = fvd.spatial_pyramid(patch_mat[row,column])
 
 
 #print patch_mat

@@ -46,7 +46,7 @@ class feature_vector_descriptor(object):
                 x1 = (row*self.__x_step_size)/sift_hop
                 x2 = (row*self.__x_step_size+self.__x_size)/sift_hop
                 #print "x1 = %d x2 = %d y1 = %d y2 = %d" %(x1, x2, y1, y2)
-                patch_mat.append(picture_sift_mat[x1:x2,y1:y2])
+                patch_mat.append(self.spatial_pyramid(picture_sift_mat[x1:x2,y1:y2]))
                 
         return np.array(patch_mat).reshape(max_patches_x,max_patches_y)
     
