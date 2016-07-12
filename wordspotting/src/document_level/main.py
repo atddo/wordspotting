@@ -170,4 +170,3 @@ if __name__ == '__main__':
     siftcalc = SiftCalculator(100, 15, 5)
     print siftcalc.calculate_visual_words_for_document('../../george_washington_files/2710271.png', visualize = False)[1]
     print siftcalc.calculate_visual_words_for_query('../../george_washington_files/2710271.png', visualize = False)
-
