@@ -32,20 +32,21 @@ class feature_vector_descriptor(object):
     def patch_mat(self,pic_x_size, pic_y_size, picture_sift_mat, cell_size, sift_hop):
           
         print pic_x_size
-        max_patches_x = np.floor((pic_x_size - self.__x_size)/self.__x_step_size)
-        max_patches_y = np.floor((pic_y_size - self.__y_size)/self.__y_step_size)
+        max_patches_x = (pic_x_size - self.__x_size)/self.__x_step_size +1
+        max_patches_y = (pic_y_size - self.__y_size)/self.__y_step_size +1
         print max_patches_x
+        print max_patches_y
         patch_mat = []
         
-            
-        for column in range(int(max_patches_x)):
-            for row in range(int(max_patches_y)):
+        for row in range(max_patches_y):
+            for column in range(max_patches_x):
+
                 y1 = (column*self.__y_step_size)/sift_hop
                 y2 = (column*self.__y_step_size+self.__y_size)/sift_hop
                 x1 = (row*self.__x_step_size)/sift_hop
                 x2 = (row*self.__x_step_size+self.__x_size)/sift_hop
                 #print "x1 = %d x2 = %d y1 = %d y2 = %d" %(x1, x2, y1, y2)
-                patch_mat.append(picture_sift_mat[y1:y2,x1:x2])
+                patch_mat.append(picture_sift_mat[x1:x2,y1:y2])
                 
         return np.array(patch_mat)
     

@@ -4,12 +4,12 @@ import Image
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import patch_level.main
-sift_step_size = 100
+sift_step_size = 50
 sift_cell_size = 15
 sift_n_classes = 50
 
 patch_width = 300
-patch_height = 175
+patch_height = 200
 patch_hop_size = 100
 
 visualize_progress=False 
@@ -41,7 +41,7 @@ centroids, labels = siftcalc.calculate_visual_words_for_document(searchfile, vis
 
 print labels
 fvd = patch_level.main.feature_vector_descriptor(patch_width, patch_height, patch_hop_size, patch_hop_size,sift_step_size, sift_cell_size)
-print fvd.patch_mat(dimensions[0], dimensions[1], labels, sift_cell_size, sift_step_size)
+print fvd.patch_mat(dimensions[1], dimensions[0], labels, sift_cell_size, sift_step_size)
 
 
 
