@@ -43,6 +43,7 @@ class SiftCalculator(object):
     #     frames, desc = pickle.load(open(pickle_densesift_fn, 'rb'))
         frames = frames.T
         desc = desc.T
+        
     
         # 
         # Um eine Bag-of-Features Repraesentation des Bilds zu erstellen, wird ein
@@ -96,8 +97,6 @@ class SiftCalculator(object):
                         ax.add_line(line_v)
                 ax.add_patch(rect)
             
-            
-            
             plt.show()
         
         # Centroids: Eine Liste von Zentroiden (Auch SWIFT Operatoren!)
@@ -106,11 +105,10 @@ class SiftCalculator(object):
         # 1 4 7
         # 2 5 8
         # 3 6 9
-        self.centroids = centroids
-        labels = np.reshape(labels,(1+int((im_arr.shape[0]-(1.5*self.cell_size))/self.step_size),-1),order='F')
+        labels = np.reshape(labels,(len(np.unique(frames[:,1])),-1),order='F')
         return centroids, labels
 
 
 if __name__ == '__main__':
-    siftcalc = SiftCalculator( 80, 15, 5)
-    siftcalc.calculate_visual_words_for_document('../../george_washington_files/2710271.png', visualize = True)
+    siftcalc = SiftCalculator(10, 15, 5)
+    siftcalc.calculate_visual_words_for_document('../../george_washington_files/2710271.png', visualize = False)
