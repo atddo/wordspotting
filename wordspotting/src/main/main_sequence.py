@@ -40,9 +40,18 @@ centroids, labels = siftcalc.calculate_visual_words_for_document(searchfile, vis
 
 
 print labels
-fvd = patch_level.main.feature_vector_descriptor(patch_width, patch_height, patch_hop_size, patch_hop_size,sift_step_size, sift_cell_size)
-print fvd.patch_mat(dimensions[1], dimensions[0], labels, sift_cell_size, sift_step_size)
+fvd = patch_level.main.feature_vector_descriptor(patch_width, patch_height, patch_hop_size, patch_hop_size,sift_step_size, sift_cell_size, sift_n_classes)
+patch_mat = fvd.patch_mat(dimensions[1], dimensions[0], labels, sift_cell_size, sift_step_size)
 
+pyramid_mat = np.zeros_like(patch_mat)
+for column in range(pyramid_mat.shape[1]):
+    for row in range(pyramid_mat.shape[0]):
+        pyramid_mat[row,column] = fvd.spatial_pyramid(patch_mat[row,column])
+
+
+#print patch_mat
+#print pyramid_mat.shape
+#print pyramid_mat[0,0].shape
 
 
 if __name__ == '__main__':

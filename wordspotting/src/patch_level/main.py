@@ -10,7 +10,7 @@ class feature_vector_descriptor(object):
     #
     # initializes the patch size and step size
     #
-    def __init__(self, x_size, y_size, x_step_size, y_step_size, sift_step_size, sift_cell_size):
+    def __init__(self, x_size, y_size, x_step_size, y_step_size, sift_step_size, sift_cell_size, n_classes):
         self.__x_size = x_size
         self.__y_size = y_size
         self.__x_step_size = x_step_size
@@ -19,7 +19,7 @@ class feature_vector_descriptor(object):
         self.__sift_cell_size = sift_cell_size
         self.__x_sift_per_patch = np.floor((self.__x_size + 1.5 * self.__sift_cell_size) / self.__sift_step_size)
         self.__y_sift_per_patch = np.floor((self.__y_size + 1.5 * self.__sift_cell_size) / self.__sift_step_size)
-    
+        self.__n_classes = n_classes
     # gets the patch (row, column)
     # im_arr: the picture
     # return im_arr: sliced array im_arr
@@ -48,18 +48,22 @@ class feature_vector_descriptor(object):
                 #print "x1 = %d x2 = %d y1 = %d y2 = %d" %(x1, x2, y1, y2)
                 patch_mat.append(picture_sift_mat[x1:x2,y1:y2])
                 
-        return np.array(patch_mat)
+        return np.array(patch_mat).reshape(max_patches_x,max_patches_y)
     
     def spatial_pyramid(self, patch_mat):
+
         (patch_x_size, patch_y_size) = patch_mat.shape
+        total = patch_mat
+
         
-        pyramid_mat = np.array(patch_x_size, patch_y_size)
+        left_half = total[:,:patch_y_size/2]
+        right_half = total[:,patch_y_size/2:]
+
+
+        return np.vstack((self.getBagOfFeatures(total),self.getBagOfFeatures(left_half),self.getBagOfFeatures(right_half))).reshape(-1)
+    
+    def getBagOfFeatures(self, sift_mat):
+        return np.bincount(sift_mat.reshape(-1),minlength = self.__n_classes)
         
-        for i,j in patch_mat.shape:
-            total = patch_mat[i][j]
-            left_half = total[:patch_x_size/2]
-            right_half = total[patch_x_size/2:]
-            
-            pyramid_mat[i][j] = np.hstack((total, left_half, right_half))
-            
-        return pyramid_mat
+        
+        
