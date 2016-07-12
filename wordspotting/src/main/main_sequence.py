@@ -9,17 +9,17 @@ from latent_semantic_indexing.TopicFeatureTransform import TopicFeatureTransform
 from compiler.pyassem import FLAT
 from tables.table import Column
 from scipy.spatial.distance import cdist
-
-sift_step_size = 30
+from retrieval.main import Retrieval
+sift_step_size = 5
 sift_cell_size = 15
 sift_n_classes = 50
 
 patch_width = 300
-patch_height =300
-patch_hop_size = 100
+patch_height =75
+patch_hop_size = 25
 metric = 'cosine'
 
-flatten_dimensions = 5
+flatten_dimensions = 100
 
 visualize_progress=False 
 
@@ -72,7 +72,9 @@ distances_array = cdist(transfomed_array, np.array([transformed_query]), metric=
 
 distances_mat = distances_array.reshape(mat_shape)
 
-
+ret = Retrieval(patch_width, patch_height, patch_hop_size, searchfile)
+_, non_max_list = ret.non_maximum_suppression(distances_mat)
+coordinates_list = ret.create_list(non_max_list, visualize = True)
 
 
 
