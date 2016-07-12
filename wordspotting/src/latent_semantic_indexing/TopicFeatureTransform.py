@@ -17,17 +17,12 @@ class TopicFeatureTransform(object):
         a=0
        
         
-    def estimate(self, train_data, train_labels):
+    def estimate(self, train_data):
         """Statistische Schaetzung des Topic Raums
         
         Params:
             train_data: ndarray, das Merkmalsvektoren zeilenweise enthaelt (d x t).
-            train_labels: ndarray, das Klassenlabels spaltenweise enthaelt (d x 1).
-                Hinweis: Fuer den hier zu implementierenden Topic Raum werden die
-                Klassenlabels nicht benoetigt. Sind sind Teil der Methodensignatur
-                im Sinne einer konsitenten und vollstaendigen Verwaltung der zur
-                Verfuegung stehenden Information.
-            
+                       
             mit d Trainingsbeispielen und t dimensionalen Merkmalsvektoren.
         """
         self.__T, s_arr, D = np.linalg.svd(train_data.T, full_matrices =False)
