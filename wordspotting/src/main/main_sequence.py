@@ -4,29 +4,35 @@ import Image
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import patch_level.main
-import latent_semantic_indexing.TopicFeatureTransform
 from latent_semantic_indexing.TopicFeatureTransform import TopicFeatureTransform
-from compiler.pyassem import FLAT
-from tables.table import Column
 from scipy.spatial.distance import cdist
 from retrieval.main import Retrieval
-sift_step_size = 5
+
+
+
+# patch_hop_size = n*sift_step_size
+# patch_width = m*sift_step_size
+# patch_height = i*sift_step_size
+
+sift_step_size = 25
 sift_cell_size = 15
-sift_n_classes = 50
+sift_n_classes = 1000
 
 patch_width = 300
-patch_height =75
-patch_hop_size = 25
+patch_height = 100
+patch_hop_size = 100
 metric = 'cosine'
 
-flatten_dimensions = 100
+flatten_dimensions = 1000
 
-visualize_progress=False 
+visualize_progress=False
 searchfile = '../../george_washington_files/2700270.png'
 image = Image.open(searchfile)
 # Fuer spaeter folgende Verarbeitungsschritte muss das Bild mit float32-Werten vorliegen. 
 im_arr = np.asarray(image, dtype='float32')
 dimensions = im_arr.shape
+print "Bild-dimensions: "
+print dimensions
 
 # 1043 671 1443 765 companies
 groundtrouth = (580, 319, 723, 406, "the")
@@ -37,8 +43,8 @@ query = (groundtrouth[0] - (patch_width - min(distance_to_end_x, patch_width)),
          groundtrouth[0] + min(distance_to_end_x, patch_width),
          groundtrouth[1] + min(distance_to_end_y, patch_height)
          )
-
-query_im = im_arr[query[1]:query[3], query[0]:query[2]]
+query_im = im_arr[groundtrouth[1]:groundtrouth[3], groundtrouth[0]:groundtrouth[2]]
+#query_im = im_arr[query[1]:query[3], query[0]:query[2]]
 if visualize_progress:
     plt.imshow(query_im, cmap=cm.get_cmap('Greys_r'))
     plt.show()
@@ -47,15 +53,26 @@ siftcalc = document_level.main.SiftCalculator(sift_step_size, sift_cell_size, si
 centroids, labels = siftcalc.calculate_visual_words_for_document(searchfile, visualize = visualize_progress)
 query_sift = siftcalc.calculate_visual_words_for_query(query_im, visualize=visualize_progress)
 
+print "bof-matrix des Bildes"
 print labels
-fvd = patch_level.main.feature_vector_descriptor(patch_width, patch_height, patch_hop_size, patch_hop_size,sift_step_size, sift_cell_size, sift_n_classes)
-patch_mat = fvd.patch_mat(dimensions[1], dimensions[0], labels, sift_cell_size, sift_step_size)
+print labels.shape
+
+fvd = patch_level.main.feature_vector_descriptor(patch_width, patch_height, patch_hop_size, patch_hop_size, sift_n_classes)
+patch_mat = fvd.patch_mat(dimensions[1], dimensions[0], labels, sift_step_size)
+
+print "bof-matrix der patches"
+print patch_mat.shape
+print patch_mat[1,3]
 
 pyramid_mat = np.zeros_like(patch_mat)
 for column in range(pyramid_mat.shape[1]):
     for row in range(pyramid_mat.shape[0]):
         pyramid_mat[row,column] = fvd.spatial_pyramid(patch_mat[row,column])
         
+print "pyramid mat"
+print pyramid_mat.shape
+print pyramid_mat[1,3]
+
 query_pyramid = fvd.spatial_pyramid(query_sift)
 
 tft = TopicFeatureTransform(flatten_dimensions)
@@ -70,7 +87,7 @@ transformed_query = tft.transform(np.array(query_pyramid))
 distances_array = cdist(transfomed_array, np.array([transformed_query]), metric=metric)
 
 distances_mat = distances_array.reshape(mat_shape)
-
+print distances_mat.shape
 ret = Retrieval(patch_width, patch_height, patch_hop_size, searchfile)
 _, non_max_list = ret.non_maximum_suppression(distances_mat)
 coordinates_list = ret.create_list(non_max_list, visualize = True)
