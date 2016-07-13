@@ -81,7 +81,6 @@ class SiftCalculator(object):
         labels = np.reshape(labels,(len(np.unique(frames[:,1])),-1),order='F')
         return labels
     
-    
     def calculate_visual_words_for_document(self, document_image_filename, visualize = False):
         image = Image.open(document_image_filename)
         # Fuer spaeter folgende Verarbeitungsschritte muss das Bild mit float32-Werten vorliegen. 
@@ -92,7 +91,7 @@ class SiftCalculator(object):
             plt.show()
         
         
-        
+        print "Berechne Sift Deskriptoren"
         # SIFT Deskriptoren berechnen
         frames, desc = vlfeat.vl_dsift(im_arr, step=self.step_size, size=self.cell_size)
     #     pickle_densesift_fn = '2700270-small_dense-%d_sift-%d_descriptors.p' % (step_size, cell_size)
@@ -119,7 +118,9 @@ class SiftCalculator(object):
         #
         # Die Abbildung von Deskriptoren auf Centroiden (Visual Words) bezeichnet man als Quantisierung.
         
-        centroids, labels = kmeans2(desc, self.n_centroids, iter=20, minit='points')
+        print "Berechne Visual Words"
+        centroids, labels = kmeans2(desc, self.n_centroids, iter=2, minit='points')
+        print "Berechnung Visual Words abgeschlossen."
         #
         # Die Deskriptoren und deren Quantisierung werden nun visualisiert. Zu jedem 
         # Deskriptor werden dazu die Mittelpunkte und die 4x4 Zellen eingezeichnet.

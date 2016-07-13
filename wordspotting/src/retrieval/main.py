@@ -51,13 +51,18 @@ class Retrieval(object):
             result_list.append(elem)
             if visualize == True:
                 print "Value is: %f" %value
-                plt.imshow(patch, cmap=cm.get_cmap('Greys_r'))
-                plt.show()
+                print elem
+                try:
+                    plt.imshow(patch, cmap=cm.get_cmap('Greys_r'))
+                    plt.show()
+                except ValueError:
+                    print patch
+                
             
         return result_list
             
 if __name__ == '__main__':
-    distance_matrix = np.array([5,4,0,1,1,3,4,2,2,1,1,0]).reshape(3,4)
+    distance_matrix = np.array([5,0,2,1,0,3,4,2,2,1,1,0,2,3,4,1]).reshape(4,4)
     print distance_matrix
     ret = Retrieval(400, 300, 200, '../../george_washington_files/2710271.png')
     non_max_matrix, non_max_list =  ret.non_maximum_suppression(distance_matrix)
