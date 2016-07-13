@@ -22,7 +22,6 @@ metric = 'cosine'
 flatten_dimensions = 100
 
 visualize_progress=False 
-
 searchfile = '../../george_washington_files/2700270.png'
 image = Image.open(searchfile)
 # Fuer spaeter folgende Verarbeitungsschritte muss das Bild mit float32-Werten vorliegen. 
@@ -30,7 +29,7 @@ im_arr = np.asarray(image, dtype='float32')
 dimensions = im_arr.shape
 
 # 1043 671 1443 765 companies
-groundtrouth = (1043, 671, 1443, 765, "companies")
+groundtrouth = (580, 319, 723, 406, "the")
 distance_to_end_x = dimensions[0]- groundtrouth[2]
 distance_to_end_y = dimensions[1]- groundtrouth[3]
 query = (groundtrouth[0] - (patch_width - min(distance_to_end_x, patch_width)),
