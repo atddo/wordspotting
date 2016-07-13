@@ -1,14 +1,11 @@
-import document_level.main
-import numpy as np
-import Image
-import matplotlib.pyplot as plt
-import matplotlib.cm as cm
-import patch_level.main
-from latent_semantic_indexing.TopicFeatureTransform import TopicFeatureTransform
-from scipy.spatial.distance import cdist
-from retrieval.main import Retrieval
-from src.word_finder.main import word_finder
+from word_finder import word_finder
+import collections
+from visualizer import ScoreVisualization
 
+def roundTo(n,base):
+    while n%base != 0:
+        n+=1
+    return n
 
 # patch_hop_size = n*sift_step_size
 # patch_width = m*sift_step_size
@@ -16,89 +13,55 @@ from src.word_finder.main import word_finder
 
 sift_step_size = 5
 sift_cell_size = 15
-sift_n_classes = 1000
+sift_n_classes = 100
 
 patch_width = 300
-patch_height = 100
+patch_height = 75
 patch_hop_size = 25
 metric = 'cosine'
 
-flatten_dimensions = 1000
+flatten_dimensions = 100
 
 visualize_progress=False
 searchfile = '../../george_washington_files/2700270.png'
 
 
-my_finder = word_finder()
-
-'''
-image = Image.open(searchfile)
-# Fuer spaeter folgende Verarbeitungsschritte muss das Bild mit float32-Werten vorliegen. 
-im_arr = np.asarray(image, dtype='float32')
-dimensions = im_arr.shape
-print "Bild-dimensions: "
-print dimensions
-
-# 1043 671 1443 765 companies
-groundtrouth = (580, 319, 723, 406, "the")
-distance_to_end_x = dimensions[0]- groundtrouth[2]
-distance_to_end_y = dimensions[1]- groundtrouth[3]
-query = (groundtrouth[0] - (patch_width - min(distance_to_end_x, patch_width)),
-         groundtrouth[1] - (patch_height - min(distance_to_end_y, patch_height)), 
-         groundtrouth[0] + min(distance_to_end_x, patch_width),
-         groundtrouth[1] + min(distance_to_end_y, patch_height)
-         )
-query_im = im_arr[groundtrouth[1]:groundtrouth[3], groundtrouth[0]:groundtrouth[2]]
-#query_im = im_arr[query[1]:query[3], query[0]:query[2]]
-if visualize_progress:
-    plt.imshow(query_im, cmap=cm.get_cmap('Greys_r'))
-    plt.show()
-
-siftcalc = document_level.main.SiftCalculator(sift_step_size, sift_cell_size, sift_n_classes)
-centroids, labels = siftcalc.calculate_visual_words_for_document(searchfile, visualize = visualize_progress)
-query_sift = siftcalc.calculate_visual_words_for_query(query_im, visualize=visualize_progress)
-
-print "bof-matrix des Bildes"
-print labels
-print labels.shape
-
-fvd = patch_level.main.feature_vector_descriptor(patch_width, patch_height, patch_hop_size, patch_hop_size, sift_n_classes)
-patch_mat = fvd.patch_mat(dimensions[1], dimensions[0], labels, sift_step_size)
-
-print "bof-matrix der patches"
-print patch_mat.shape
-print patch_mat[1,3]
-
-pyramid_mat = np.zeros_like(patch_mat)
-for column in range(pyramid_mat.shape[1]):
-    for row in range(pyramid_mat.shape[0]):
-        pyramid_mat[row,column] = fvd.spatial_pyramid(patch_mat[row,column])
-        
-print "pyramid mat"
-print pyramid_mat.shape
-print pyramid_mat[1,3]
-
-query_pyramid = fvd.spatial_pyramid(query_sift)
-
-tft = TopicFeatureTransform(flatten_dimensions)
-flat_pyramid_mat=np.array([v for i in pyramid_mat for v in i])
-
-tft.estimate(flat_pyramid_mat)
-mat_shape = pyramid_mat.shape
-
-transfomed_array=tft.transform(flat_pyramid_mat)
-transformed_query = tft.transform(np.array(query_pyramid))
-
-distances_array = cdist(transfomed_array, np.array([transformed_query]), metric=metric)
-
-distances_mat = distances_array.reshape(mat_shape)
-print distances_mat.shape
-ret = Retrieval(patch_width, patch_height, patch_hop_size, searchfile)
-_, non_max_list = ret.non_maximum_suppression(distances_mat)
-coordinates_list = ret.create_list(non_max_list, visualize = True)
-'''
+#my_finder = word_finder(sift_step_size, sift_cell_size, sift_n_classes, patch_width, patch_height, patch_hop_size, flatten_dimensions, searchfile, visualize_progress)
+print "Initialisierung abgeschlossen"
+#my_finder.search((580, 319, 723, 406, "the"))
+print "next search"
+#my_finder.search((1235, 1518, 1450, 1622, "with"))
 
 
+page = searchfile.split('/')[-1].split('.')[0]
+gt_file = '../../groundtruth/'+page+'.gtp'
+
+with open(gt_file) as f:
+    gts = f.readlines()
+
+
+positions = collections.defaultdict(lambda: [])
+for line in gts:
+    line = line.split(' ')
+    word = line[-1]
+    if word.endswith("\n"):
+        word = word[:-1]
+    positions[word].append((line[0],line[1],line[2],line[3]))
+
+
+
+for word in positions.keys():
+    print word
+    for position in positions[word]:
+        query_width = position[2]-position[0]
+        width = roundTo(query_width, 50)
+        print width
+        my_finder = word_finder(sift_step_size, sift_cell_size, sift_n_classes, width, patch_height, patch_hop_size, flatten_dimensions, searchfile, visualize_progress)
+        result = my_finder.search(position)
+         
+
+
+    
 
 if __name__ == '__main__':
     pass

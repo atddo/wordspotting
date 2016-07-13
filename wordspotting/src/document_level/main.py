@@ -119,7 +119,7 @@ class SiftCalculator(object):
         # Die Abbildung von Deskriptoren auf Centroiden (Visual Words) bezeichnet man als Quantisierung.
         
         print "Berechne Visual Words"
-        centroids, labels = kmeans2(desc, self.n_centroids, iter=2, minit='points')
+        centroids, labels = kmeans2(desc, self.n_centroids, minit='points')
         print "Berechnung Visual Words abgeschlossen."
         #
         # Die Deskriptoren und deren Quantisierung werden nun visualisiert. Zu jedem 
