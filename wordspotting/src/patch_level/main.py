@@ -62,10 +62,4 @@ class feature_vector_descriptor(object):
     
     def getBagOfFeatures(self, sift_mat):
         return np.bincount(sift_mat.reshape(-1),minlength = self.__n_classes)
-        
-patch_mat = []
-for row in range(5):
-    for column in range(4):
-        tuple = "co = %d ro = %d"%(column, row)
-        patch_mat.append(tuple)
-print np.array(patch_mat).reshape(5,4)
+    

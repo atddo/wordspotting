@@ -7,26 +7,31 @@ import patch_level.main
 from latent_semantic_indexing.TopicFeatureTransform import TopicFeatureTransform
 from scipy.spatial.distance import cdist
 from retrieval.main import Retrieval
-
+from src.word_finder.main import word_finder
 
 
 # patch_hop_size = n*sift_step_size
 # patch_width = m*sift_step_size
 # patch_height = i*sift_step_size
 
-sift_step_size = 25
+sift_step_size = 5
 sift_cell_size = 15
 sift_n_classes = 1000
 
 patch_width = 300
 patch_height = 100
-patch_hop_size = 100
+patch_hop_size = 25
 metric = 'cosine'
 
 flatten_dimensions = 1000
 
 visualize_progress=False
 searchfile = '../../george_washington_files/2700270.png'
+
+
+my_finder = word_finder()
+
+'''
 image = Image.open(searchfile)
 # Fuer spaeter folgende Verarbeitungsschritte muss das Bild mit float32-Werten vorliegen. 
 im_arr = np.asarray(image, dtype='float32')
@@ -91,7 +96,7 @@ print distances_mat.shape
 ret = Retrieval(patch_width, patch_height, patch_hop_size, searchfile)
 _, non_max_list = ret.non_maximum_suppression(distances_mat)
 coordinates_list = ret.create_list(non_max_list, visualize = True)
-
+'''
 
 
 
