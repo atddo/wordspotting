@@ -85,55 +85,49 @@ class feature_vector_descriptor(object):
     def calculate_overlap(self, x1, y1, x2, y2, x3, y3, x4, y4):
         if not feature_vector_descriptor.detect_collision(self, x1, y1, x2, y2, x3, y3, x4, y4):
             return 0.
-         
+        """
         if x1 <= x3 and x2 > x3:
             if x2 <= x4:
                 x = x2 - x3
             else:
                 x = x4 - x3
-            if y1 <= y3 and y2 > y3:
-                if y2 <= y4:
-                    y = y2 - y3
-                else:
-                    y = y4 - y3
-            elif y1 > y3 and y1 <= y4:
-                if y2 <= y4:
-                    y = y2 - y1
-                else:
-                    y = y4 - y1
         elif x1 > x3 and x1 <= x4:
             if x2 <= x4:
                 x = x2 - x1
             else:
                 x = x4 - x1
-            if y1 <= y3 and y2 > y3:
-                if y2 <= y4:
-                    y = y2 - y3
-                else:
-                    y = y4 - y3
-            elif y1 > y3 and y1 <= y4:
-                if y2 <= y4:
-                    y = y2 - y1
-                else:
-                    y = y4 - y1
+        if y1 <= y3 and y2 > y3:
+            if y2 <= y4:
+                y = y2 - y3
+            else:
+                y = y4 - y3
+        elif y1 > y3 and y1 <= y4:
+            if y2 <= y4:
+                y = y2 - y1
+            else:
+                y = y4 - y1
         section = x * y
-
+        """
+        x_list = sorted([x1,x2,x3,x4])
+        y_list = sorted([y1,y2,y3,y4])
+        section = max(x_list[1]-x_list[2],x_list[2]-x_list[1]) * max(y_list[1]-y_list[2],y_list[2]-y_list[1])
+        
+        print section
         r1_area = max(x1-x2,x2-x1) * max(y1-y2,y2-y1)
         r2_area = max(x3-x4,x4-x3) * max(y3-y4,y4-y3)
 
         union = r1_area + r2_area - section
 
-        overlap = section / union
+        overlap = section / float(union)
 
         return overlap
     
 if __name__ == "__main__":
-    print "Collisiontest"
+    print "Test"
     a = (5,5,10,10)
     b = [(0,0,6,6), (6,0,7,7), (9,0,11,6), (9,6,11,7), (9,9,11,11), (7,9,8,11), (3,9,6,11), (3,6,6,7),
          (0,0,5,5), (5,0,10,5), (10,10,11,11), (0,10,5,12), (6,0,7,5)]
     c = [True] * 8 + [False] * 5
-    print c
     for i in range(len(b)):
         print "\nTeste Rechtecke"
         print "a: %d %d %d %d" %a
