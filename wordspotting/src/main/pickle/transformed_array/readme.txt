@@ -1,1 +1,1 @@
-Dateien die in diesem Ordner erstellt werden nicht commiten, da diese wahrscheinlich zu groß sind
+Dateien die in diesem Ordner erstellt werden nicht commiten, da diese wahrscheinlich zu groß sind.
