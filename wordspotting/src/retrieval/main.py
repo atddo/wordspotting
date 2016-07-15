@@ -21,8 +21,7 @@ class Retrieval(object):
         self.patch_width = patch_width
         self.patch_height = patch_height
         self.patch_hop_size = patch_hop_size
-        image = Image.open(img_path)
-        self.im_arr = np.asarray(image, dtype='float32')
+        self.img_path = img_path
         
 
     def non_maximum_suppression(self, distance_matrix):
@@ -47,16 +46,18 @@ class Retrieval(object):
         result_list = []
         for (y,x,value) in non_max_list:
             elem = (x*self.patch_hop_size,y*self.patch_hop_size,x*self.patch_hop_size + self.patch_width,y*self.patch_hop_size + self.patch_height)
-            patch = self.im_arr[elem[1]:elem[3] , elem[0]:elem[2]]
             result_list.append(elem)
-            if visualize == True:
-                print "Value is: %f" %value
+        if visualize == True:
+            image = Image.open(self.img_path)
+            self.im_arr = np.asarray(image, dtype='float32')
+            for elem in result_list[:10]:
                 print elem
+                patch = self.im_arr[elem[1]:elem[3] , elem[0]:elem[2]]
                 try:
                     plt.imshow(patch, cmap=cm.get_cmap('Greys_r'))
                     plt.show()
                 except ValueError:
-                    print patch
+                    print patch    
                 
             
         return result_list

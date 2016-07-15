@@ -66,8 +66,11 @@ class feature_vector_descriptor(object):
     def getBagOfFeatures(self, sift_mat):
         return np.bincount(sift_mat.reshape(-1),minlength = self.__n_classes)
 
+
+class Overlap_Calculator(object):
+
     @staticmethod
-    def detect_collision(self, x1, y1, x2, y2, x3, y3, x4, y4):
+    def detect_collision(x1, y1, x2, y2, x3, y3, x4, y4):
         if x1 < x3 and x2 > x3:      # x3 liegt zwischen x1 und x2
             if y1 < y3 and y2 > y3:  # y3 liegt zwischen y1 und y2
                 return True
@@ -82,8 +85,8 @@ class feature_vector_descriptor(object):
 
 
     @staticmethod
-    def calculate_overlap(self, x1, y1, x2, y2, x3, y3, x4, y4):
-        if not feature_vector_descriptor.detect_collision(self, x1, y1, x2, y2, x3, y3, x4, y4):
+    def calculate_overlap(x1, y1, x2, y2, x3, y3, x4, y4):
+        if not Overlap_Calculator.detect_collision(x1, y1, x2, y2, x3, y3, x4, y4):
             return 0.
         """
         if x1 <= x3 and x2 > x3:
@@ -133,10 +136,10 @@ if __name__ == "__main__":
         print "a: %d %d %d %d" %a
         print "b: %d %d %d %d" %b[i]
         print "detect_collision:"
-        tmp = feature_vector_descriptor.detect_collision(None, a[0], a[1], a[2], a[3], b[i][0], b[i][1], b[i][2], b[i][3])
+        tmp = Overlap_Calculator.detect_collision(a[0], a[1], a[2], a[3], b[i][0], b[i][1], b[i][2], b[i][3])
         print tmp
         print "erwarteter Output:"
         print c[i]
         if tmp != c[i]:
             print "FEHLER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        print "overlap: %g" %feature_vector_descriptor.calculate_overlap(None, a[0], a[1], a[2], a[3], b[i][0], b[i][1], b[i][2], b[i][3])
+        print "overlap: %g" %Overlap_Calculator.calculate_overlap(a[0], a[1], a[2], a[3], b[i][0], b[i][1], b[i][2], b[i][3])

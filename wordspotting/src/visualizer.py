@@ -16,7 +16,7 @@ class ScoreVisualization(object):
  
         self.__score_cmap_id = score_cmap_id
         
-    def visualize_score_mat(self, document_name, score_mat, score_mat_bounds, 
+    def visualize_score_mat(self, document_name, score_mat_, score_mat_bounds, 
                             normalize_scores=True, fig=None):
         
         if score_mat_bounds is None or len(score_mat_bounds) != 4:
@@ -25,7 +25,8 @@ class ScoreVisualization(object):
         score_mat_extent = (score_mat_bounds[0], score_mat_bounds[2], 
                             score_mat_bounds[3], score_mat_bounds[1])
         
-        
+        score_mat = np.empty_like (score_mat_)
+        score_mat[:] = score_mat_
         if normalize_scores:
         
             # Remove undefined HMM scores

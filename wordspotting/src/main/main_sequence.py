@@ -1,6 +1,7 @@
 from word_finder import Word_finder
 import collections
 from visualizer import ScoreVisualization
+from patch_level.main import Overlap_Calculator
 
 def roundTo(n,base):
     while n%base != 0:
@@ -8,21 +9,29 @@ def roundTo(n,base):
     return n
 
 def eval(truth_list, result_list):
-    return (1,1,1)
-
+    max_overlap_list = []
+    for result in result_list:
+        overlap_list = []
+        for truth in truth_list:
+            overlap = Overlap_Calculator.calculate_overlap(result[0],result[1],result[2],result[3],truth[0],truth[1],truth[2],truth[3])
+            overlap_list.append(overlap)
+        max_overlap_list.append(max(overlap_list))
+        
+    print "finished!"
+    print max_overlap_list
 # patch_hop_size = n*sift_step_size
 # patch_width = m*sift_step_size
 # patch_height = i*sift_step_size
 
 sift_step_size = 5
 sift_cell_size = 15
-sift_n_classes = 2000
+sift_n_classes = 100
 
 patch_height = 75
 patch_hop_size = 15
 metric = 'cosine'
 
-flatten_dimensions = 1000
+flatten_dimensions = 100
 
 visualize_progress=False
 searchfile = '../../george_washington_files/2700270.png'
@@ -43,7 +52,7 @@ for line in gts:
 
 
 eval_list = []
-for word in positions.keys():
+for word in ["they"]:
     print word
     if len( positions[word])>1:
         for position in positions[word]:

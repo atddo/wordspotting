@@ -115,7 +115,7 @@ class Word_finder(object):
         
     
     def search(self,groundtrouth):
-        #self.visualize_progress = True
+        self.visualize_progress = True
         distance_to_end_x = self.dimensions[0]- groundtrouth[2]
         distance_to_end_y = self.dimensions[1]- groundtrouth[3]
         query = (groundtrouth[0] - (self.patch_width - min(distance_to_end_x, self.patch_width)),
