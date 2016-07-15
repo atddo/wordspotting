@@ -1,4 +1,4 @@
-from word_finder import word_finder
+from word_finder import Word_finder
 import collections
 from visualizer import ScoreVisualization
 
@@ -13,7 +13,7 @@ def roundTo(n,base):
 
 sift_step_size = 5
 sift_cell_size = 15
-sift_n_classes = 4000
+sift_n_classes = 100
 
 patch_width = 300
 patch_height = 75
@@ -55,7 +55,7 @@ for word in positions.keys():
             query_width = position[2] - position[0]
             width = roundTo(query_width, 50)
             print width
-            my_finder = word_finder(sift_step_size, sift_cell_size, sift_n_classes, width, patch_height, patch_hop_size, flatten_dimensions, searchfile, visualize_progress)
+            my_finder = Word_finder(sift_step_size, sift_cell_size, sift_n_classes, width, patch_height, patch_hop_size, flatten_dimensions, searchfile, visualize_progress)
             result = my_finder.search(position)
              
 

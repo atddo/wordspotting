@@ -18,7 +18,7 @@ import os.path
 from visualizer import ScoreVisualization
 import visualizer
 
-class word_finder(object):
+class Word_finder(object):
     '''
     classdocs
     '''
@@ -58,62 +58,60 @@ class word_finder(object):
         pickle_path="pickle/"
         sift_cal_id = self.getIdString("siftcal",[sift_step_size, sift_cell_size, sift_n_classes, filename] )
         labels_id = self.getIdString("labels", [sift_step_size, sift_cell_size, sift_n_classes, filename])
-        fvd_id = self.getIdString("fvd", [patch_width, patch_height, patch_hop_size, patch_hop_size, sift_n_classes])
-        pyramid_mat_id = self.getIdString("pyramid_mat", [filename,sift_step_size,sift_cell_size,sift_n_classes,patch_width,patch_height,patch_hop_size])
+        
+        fvd_id = self.getIdString("fvd", [patch_width, patch_height, patch_hop_size, patch_hop_size, sift_n_classes, dimensions[0],dimensions[1]])
+        
         tft_id = self.getIdString("tft", [filename,sift_step_size,sift_cell_size,sift_n_classes,patch_width,patch_height,patch_hop_size,flatten_dimensions])
         transformed_aray_id = self.getIdString("transformed_array", [filename,sift_step_size,sift_cell_size,sift_n_classes,patch_width,patch_height,patch_hop_size,flatten_dimensions])
         #unique_to_class=[filename,sift_step_size,sift_cell_size,sift_n_classes,patch_width,patch_height,patch_hop_size,flatten_dimensions]
         
-        
+
         if os.path.isfile(pickle_path+sift_cal_id+".p"):
+            print "loading"
             self.siftcalc = pickle.load(open(pickle_path+sift_cal_id +".p","rb"))
             if os.path.isfile(pickle_path+labels_id+".p"):
+                print "loading"
                 labels = pickle.load(open(pickle_path+labels_id +".p","rb"))
             else:
                 _, labels = self.siftcalc.calculate_visual_words_for_document(searchfile, visualize = visualize_progress)
                 pickle.dump(labels,open(pickle_path+labels_id +".p","wb"))
-                
                 
         else:
             self.siftcalc = document_level.main.SiftCalculator(sift_step_size, sift_cell_size, sift_n_classes)
             _, labels = self.siftcalc.calculate_visual_words_for_document(searchfile, visualize = visualize_progress)
             pickle.dump(self.siftcalc,open(pickle_path+sift_cal_id +".p","wb"))
             pickle.dump(labels,open(pickle_path+labels_id +".p","wb"))
-            
+        
+        
+        
+        
         if os.path.isfile(pickle_path+fvd_id+".p"):
+            print "loading"
             self.fvd = pickle.load(open(pickle_path+fvd_id +".p","rb"))
         else:
             self.fvd = patch_level.main.feature_vector_descriptor(patch_width, patch_height, patch_hop_size, patch_hop_size, sift_n_classes)
-            pickle.dump(self.fvd,open(pickle_path+fvd_id +".p","wb"))
-        
-        if os.path.isfile(pickle_path+pyramid_mat_id+".p"):
-            pyramid_mat = pickle.load(open(pickle_path+pyramid_mat_id +".p","rb"))
+
+        if os.path.isfile(pickle_path+tft_id+".p") and os.path.isfile(pickle_path+transformed_aray_id+".p") and os.path.isfile(pickle_path+fvd_id+".p"):
+            print "loading"
+            self.tft = pickle.load(open(pickle_path+tft_id +".p","rb"))
+            self.transformed_array = pickle.load(open(pickle_path+transformed_aray_id +".p","rb"))
         else:
             patch_mat = self.fvd.patch_mat(dimensions[1], dimensions[0], labels, sift_step_size)
+            pickle.dump(self.fvd,open(pickle_path+fvd_id +".p","wb"))
+            
             pyramid_mat = np.zeros_like(patch_mat)
             for column in range(pyramid_mat.shape[1]):
                 for row in range(pyramid_mat.shape[0]):
                     pyramid_mat[row,column] = self.fvd.spatial_pyramid(patch_mat[row,column])
-            pickle.dump(pyramid_mat,open(pickle_path+pyramid_mat_id +".p","wb"))
                 
-        flat_pyramid_mat=np.array([v for i in pyramid_mat for v in i])
-        
-        if os.path.isfile(pickle_path+tft_id+".p"):
-            self.tft = pickle.load(open(pickle_path+tft_id +".p","rb"))
-        else:
+            flat_pyramid_mat=np.array([v for i in pyramid_mat for v in i])
+
             self.tft = TopicFeatureTransform(flatten_dimensions)
             self.tft.estimate(flat_pyramid_mat)
             pickle.dump(self.tft,open(pickle_path+tft_id +".p","wb"))
-        
-        self.mat_shape = pyramid_mat.shape
-        
-        
-        if os.path.isfile(pickle_path+transformed_aray_id+".p"):
-            self.transformed_array = pickle.load(open(pickle_path+transformed_aray_id +".p","rb"))
-        else:
             self.transformed_array=self.tft.transform(flat_pyramid_mat)
             pickle.dump(self.transformed_array,open(pickle_path+transformed_aray_id +".p","wb"))
-            
+        print "done"
         
     
     def search(self,groundtrouth):
@@ -139,7 +137,7 @@ class word_finder(object):
                 
         distances_array = cdist(self.transformed_array, np.array([transformed_query]), metric=self.metric)
         
-        distances_mat = distances_array.reshape(self.mat_shape)
+        distances_mat = distances_array.reshape(self.fvd.getShape())
         vis = visualizer.ScoreVisualization()
         #score_mat_bounds undefined, tuple (x_min,y_min,x_max,y_max) required
         bounds = ((0.5*self.patch_width),(0.5*self.patch_height),(distances_mat.shape[1]*self.patch_hop_size+0.5*self.patch_width),(distances_mat.shape[0]*self.patch_hop_size+0.5*self.patch_height))

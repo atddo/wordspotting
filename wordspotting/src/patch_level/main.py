@@ -16,7 +16,7 @@ class feature_vector_descriptor(object):
         self.__x_step_size = x_step_size
         self.__y_step_size = y_step_size
         self.__n_classes = n_classes
-
+        
     # gets the patch (row, column)
     # im_arr: the picture
     # return im_arr: sliced array im_arr
@@ -45,8 +45,11 @@ class feature_vector_descriptor(object):
                 #print "x1 = %d x2 = %d y1 = %d y2 = %d" %(x1, x2, y1, y2)
                 patch_mat.append(picture_sift_mat[y1:y2+1,x1:x2+1])
 
+        self.__shape=(max_patches_y,max_patches_x)
         return np.array(patch_mat).reshape(max_patches_y,max_patches_x)
 
+    def getShape(self):
+        return self.__shape
     def spatial_pyramid(self, patch_mat):
 
         (patch_x_size, patch_y_size) = patch_mat.shape
