@@ -152,7 +152,7 @@ class Word_finder(object):
     def getIdString(self,name,unique_to_class):
         ident = ""
         for a in unique_to_class:
-            ident= ident + str(a) + '-'
-        ident = ident + name
+            ident= ident + '-' + str(a)
+        ident = name + "/" + name + ident
         return ident
         
