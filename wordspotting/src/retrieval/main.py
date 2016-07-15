@@ -46,8 +46,8 @@ class Retrieval(object):
         non_max_list =  np.sort(non_max_list, order = 'value')
         result_list = []
         for (y,x,value) in non_max_list:
-            elem = (y*self.patch_hop_size,x*self.patch_hop_size,y*self.patch_hop_size + self.patch_height,x*self.patch_hop_size + self.patch_width)
-            patch = self.im_arr[elem[0]:elem[2] , elem[1]:elem[3]]
+            elem = (x*self.patch_hop_size,y*self.patch_hop_size,x*self.patch_hop_size + self.patch_width,y*self.patch_hop_size + self.patch_height)
+            patch = self.im_arr[elem[1]:elem[3] , elem[0]:elem[2]]
             result_list.append(elem)
             if visualize == True:
                 print "Value is: %f" %value
