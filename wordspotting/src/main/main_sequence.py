@@ -13,14 +13,14 @@ def roundTo(n,base):
 
 sift_step_size = 5
 sift_cell_size = 15
-sift_n_classes = 4000
+sift_n_classes = 2000
 
 patch_width = 300
 patch_height = 75
 patch_hop_size = 15
 metric = 'cosine'
 
-flatten_dimensions = 500
+flatten_dimensions = 1000
 
 visualize_progress=False
 searchfile = '../../george_washington_files/2700270.png'

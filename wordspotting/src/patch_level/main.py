@@ -66,58 +66,83 @@ class feature_vector_descriptor(object):
     def getBagOfFeatures(self, sift_mat):
         return np.bincount(sift_mat.reshape(-1),minlength = self.__n_classes)
 
+    @staticmethod
     def detect_collision(self, x1, y1, x2, y2, x3, y3, x4, y4):
-        if x1 <= x3 & x2 > x3:
-            if y1 <= y3 & y2 > y3:
+        if x1 < x3 and x2 > x3:      # x3 liegt zwischen x1 und x2
+            if y1 < y3 and y2 > y3:  # y3 liegt zwischen y1 und y2
                 return True
-            elif y1 > y3 & y1 <= y4:
+            elif y1 > y3 and y1 < y4:# y1 liegt zwischen y3 und y4
                 return True
-        elif x1 > x3 & x1 <= x4:
-            if y1 <= y3 & y2 > y3:
+        elif x1 > x3 and x1 < x4:    # x1 liegt zwischen x3 und x4
+            if y1 < y3 and y2 > y3:  # y3 liegt zwischen y1 und y2
                 return True
-            elif y1 > y3 & y1 <= y4:
+            elif y1 > y3 and y1 < y4:# y1 liegt zwischen y3 und y4
                 return True
-        else:
-            return False
+        return False
 
+
+    @staticmethod
     def calculate_overlap(self, x1, y1, x2, y2, x3, y3, x4, y4):
-        if x1 <= x3 & x2 > x3:
+        if not feature_vector_descriptor.detect_collision(self, x1, y1, x2, y2, x3, y3, x4, y4):
+            return 0.
+         
+        if x1 <= x3 and x2 > x3:
             if x2 <= x4:
                 x = x2 - x3
             else:
                 x = x4 - x3
-            if y1 <= y3 & y2 > y3:
+            if y1 <= y3 and y2 > y3:
                 if y2 <= y4:
                     y = y2 - y3
                 else:
                     y = y4 - y3
-            elif y1 > y3 & y1 <= y4:
+            elif y1 > y3 and y1 <= y4:
                 if y2 <= y4:
                     y = y2 - y1
                 else:
                     y = y4 - y1
-        elif x1 > x3 & x1 <= x4:
+        elif x1 > x3 and x1 <= x4:
             if x2 <= x4:
                 x = x2 - x1
             else:
                 x = x4 - x1
-            if y1 <= y3 & y2 > y3:
+            if y1 <= y3 and y2 > y3:
                 if y2 <= y4:
                     y = y2 - y3
                 else:
                     y = y4 - y3
-            elif y1 > y3 & y1 <= y4:
+            elif y1 > y3 and y1 <= y4:
                 if y2 <= y4:
                     y = y2 - y1
                 else:
                     y = y4 - y1
         section = x * y
 
-        r1_area = (x2 - x1) * (y2 - y1)
-        r2_area = (x4 - x3) * (y4 - y3)
+        r1_area = max(x1-x2,x2-x1) * max(y1-y2,y2-y1)
+        r2_area = max(x3-x4,x4-x3) * max(y3-y4,y4-y3)
 
         union = r1_area + r2_area - section
 
         overlap = section / union
 
         return overlap
+    
+if __name__ == "__main__":
+    print "Collisiontest"
+    a = (5,5,10,10)
+    b = [(0,0,6,6), (6,0,7,7), (9,0,11,6), (9,6,11,7), (9,9,11,11), (7,9,8,11), (3,9,6,11), (3,6,6,7),
+         (0,0,5,5), (5,0,10,5), (10,10,11,11), (0,10,5,12), (6,0,7,5)]
+    c = [True] * 8 + [False] * 5
+    print c
+    for i in range(len(b)):
+        print "\nTeste Rechtecke"
+        print "a: %d %d %d %d" %a
+        print "b: %d %d %d %d" %b[i]
+        print "detect_collision:"
+        tmp = feature_vector_descriptor.detect_collision(None, a[0], a[1], a[2], a[3], b[i][0], b[i][1], b[i][2], b[i][3])
+        print tmp
+        print "erwarteter Output:"
+        print c[i]
+        if tmp != c[i]:
+            print "FEHLER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        print "overlap: %g" %feature_vector_descriptor.calculate_overlap(None, a[0], a[1], a[2], a[3], b[i][0], b[i][1], b[i][2], b[i][3])
