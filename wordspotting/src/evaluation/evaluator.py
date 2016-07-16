@@ -45,15 +45,18 @@ class Evaluator(object):
     
     @staticmethod
     def calculate_avg_precision(truth_list, result_list, threshold):
-       
+        
+      
+        truth_len = len(truth_list)
         hitlist = Evaluator.getHitlist(truth_list, result_list, threshold)
+
         sum = 0
         for a in it.izip(hitlist, np.arange(1,len(hitlist)+1)):
             sub_list = hitlist[:a[1]]
             sum += (a[0]*np.sum(sub_list)) / float(a[1])
-            print 'sub_list: %s'%sub_list
+            print 'sub_list: %s , %s'%(sub_list,(a[0]*np.sum(sub_list)) / float(a[1]))
             
-        return sum / float(len(truth_list))
+        return sum / float(truth_len)
             
     
     
