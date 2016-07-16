@@ -45,8 +45,6 @@ class Evaluator(object):
     
     @staticmethod
     def calculate_avg_precision(truth_list, result_list, threshold):
-        
-      
         truth_len = len(truth_list)
         hitlist = Evaluator.getHitlist(truth_list, result_list, threshold)
 
@@ -57,6 +55,18 @@ class Evaluator(object):
             print 'sub_list: %s , %s'%(sub_list,(a[0]*np.sum(sub_list)) / float(a[1]))
             
         return sum / float(truth_len)
+    
+    
+    @staticmethod
+    def calculate_mean_avg_precision(truth_lists, result_lists, threshold):
+        n=len(result_lists)
+        
+        sum = 0;
+        for t,r in it.izip(truth_lists, result_lists):
+            sum += Evaluator.calculate_avg_precision(t,r,threshold)
+        
+        return sum/n
+        
             
     
     
