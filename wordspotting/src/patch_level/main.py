@@ -1,8 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-import Image
-import vlfeat
+
 from scipy.spatial.distance import cdist
 
 class feature_vector_descriptor(object):
@@ -115,7 +114,7 @@ class Overlap_Calculator(object):
         y_list = sorted([y1,y2,y3,y4])
         section = max(x_list[1]-x_list[2],x_list[2]-x_list[1]) * max(y_list[1]-y_list[2],y_list[2]-y_list[1])
         
-        print section
+        #print section
         r1_area = max(x1-x2,x2-x1) * max(y1-y2,y2-y1)
         r2_area = max(x3-x4,x4-x3) * max(y3-y4,y4-y3)
 
@@ -125,21 +124,25 @@ class Overlap_Calculator(object):
 
         return overlap
     
+        
+    
 if __name__ == "__main__":
     print "Test"
     a = (5,5,10,10)
     b = [(0,0,6,6), (6,0,7,7), (9,0,11,6), (9,6,11,7), (9,9,11,11), (7,9,8,11), (3,9,6,11), (3,6,6,7),
          (0,0,5,5), (5,0,10,5), (10,10,11,11), (0,10,5,12), (6,0,7,5)]
     c = [True] * 8 + [False] * 5
-    for i in range(len(b)):
-        print "\nTeste Rechtecke"
-        print "a: %d %d %d %d" %a
-        print "b: %d %d %d %d" %b[i]
-        print "detect_collision:"
-        tmp = Overlap_Calculator.detect_collision(a[0], a[1], a[2], a[3], b[i][0], b[i][1], b[i][2], b[i][3])
-        print tmp
-        print "erwarteter Output:"
-        print c[i]
-        if tmp != c[i]:
-            print "FEHLER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        print "overlap: %g" %Overlap_Calculator.calculate_overlap(a[0], a[1], a[2], a[3], b[i][0], b[i][1], b[i][2], b[i][3])
+    Overlap_Calculator.calculate_hitlist(b, [a])
+    
+    #for i in range(len(b)):
+    #    print "\nTeste Rechtecke"
+    #    print "a: %d %d %d %d" %a
+    #    print "b: %d %d %d %d" %b[i]
+    #    print "detect_collision:"
+    #    tmp = Overlap_Calculator.detect_collision(a[0], a[1], a[2], a[3], b[i][0], b[i][1], b[i][2], b[i][3])
+    #    print tmp
+    #    print "erwarteter Output:"
+    #    print c[i]
+    #    if tmp != c[i]:
+    #       print "FEHLER!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    #    print "overlap: %g" %Overlap_Calculator.calculate_overlap(a[0], a[1], a[2], a[3], b[i][0], b[i][1], b[i][2], b[i][3])
