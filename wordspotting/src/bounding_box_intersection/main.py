@@ -7,7 +7,7 @@ from scipy.spatial.distance import cdist
 class bounding_box_intersection(object):
     
     #
-    # Erwartet die Position, Hï¿½he und Breite der beiden Patches
+    # Erwartet die Position, Höhe und Breite der beiden Patches
     # Returns:  Boolschen Wert ob die beiden Werte kollidieren
     #
   
