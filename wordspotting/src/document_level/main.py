@@ -30,9 +30,9 @@ class SiftCalculator(object):
         # Fuer spaeter folgende Verarbeitungsschritte muss das Bild mit float32-Werten vorliegen. 
         im_arr = query_image
         # Die colormap legt fest wie die Intensitaetswerte interpretiert werden.
-        if visualize:
-            plt.imshow(im_arr, cmap=cm.get_cmap('Greys_r'))
-            plt.show()
+        #if visualize:
+        #    plt.imshow(im_arr, cmap=cm.get_cmap('Greys_r'))
+        #    plt.show()
         
         
         
@@ -98,7 +98,6 @@ class SiftCalculator(object):
     #     frames, desc = pickle.load(open(pickle_densesift_fn, 'rb'))
         frames = frames.T
         desc = desc.T
-        
     
         # 
         # Um eine Bag-of-Features Repraesentation des Bilds zu erstellen, wird ein
@@ -119,7 +118,7 @@ class SiftCalculator(object):
         # Die Abbildung von Deskriptoren auf Centroiden (Visual Words) bezeichnet man als Quantisierung.
         
         print "Berechne Visual Words"
-        centroids, labels = kmeans2(desc, self.n_centroids, minit='points')
+        centroids, labels = kmeans2(desc.astype(float), self.n_centroids, minit='points')
         print "Berechnung Visual Words abgeschlossen."
         #
         # Die Deskriptoren und deren Quantisierung werden nun visualisiert. Zu jedem 

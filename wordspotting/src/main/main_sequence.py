@@ -28,12 +28,13 @@ sift_cell_size = 15
 sift_n_classes = 100
 
 patch_height = 75
-patch_hop_size = 15
+patch_hop_size = 10
 metric = 'cosine'
 
 flatten_dimensions = 100
 
 visualize_progress=False
+tf_idf = True
 searchfile = '../../george_washington_files/2700270.png'
 
 page = searchfile.split('/')[-1].split('.')[0]
@@ -57,9 +58,12 @@ for word in ["they"]:
     if len( positions[word])>1:
         for position in positions[word]:
             query_width = position[2] - position[0]
-            width = roundTo(query_width, 50)
+            query_height = position[3] - position[1]
+            width = query_width #roundTo(query_width, 50)
+            #print width
+            #print query_height
+            my_finder = Word_finder(sift_step_size, sift_cell_size, sift_n_classes, width, query_height, patch_hop_size, flatten_dimensions, searchfile, visualize_progress, tf_idf)
             
-            my_finder = Word_finder(sift_step_size, sift_cell_size, sift_n_classes, width, patch_height, patch_hop_size, flatten_dimensions, searchfile, visualize_progress)
             result = my_finder.search(position)
             eval_list.append(eval(positions[word],result))
              

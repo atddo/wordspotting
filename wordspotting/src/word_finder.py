@@ -12,6 +12,7 @@ import matplotlib.cm as cm
 import patch_level.main
 import cPickle as pickle
 from latent_semantic_indexing.TopicFeatureTransform import TopicFeatureTransform
+from latent_semantic_indexing.Weighting import Tf_idf
 from scipy.spatial.distance import cdist
 from retrieval.main import Retrieval
 import os.path
@@ -24,7 +25,7 @@ class Word_finder(object):
     '''
 
 
-    def __init__(self, sift_step_size, sift_cell_size, sift_n_classes,patch_width,patch_height,patch_hop_size,flatten_dimensions,searchfile,visualize_progress=False):
+    def __init__(self, sift_step_size, sift_cell_size, sift_n_classes,patch_width,patch_height,patch_hop_size,flatten_dimensions,searchfile,visualize_progress=False, tf_idf = True):
         '''
         Constructor
         '''
@@ -42,6 +43,7 @@ class Word_finder(object):
         self.flatten_dimensions = flatten_dimensions
         self.visualize_progress=visualize_progress
         self.metric = 'cosine'
+        self.tf_idf = tf_idf
         
         self.searchfile=searchfile
         filename=searchfile.split('/')[-1].split('.')[0]
@@ -61,10 +63,19 @@ class Word_finder(object):
         
         fvd_id = self.getIdString("fvd", [patch_width, patch_height, patch_hop_size, patch_hop_size, sift_n_classes, dimensions[0],dimensions[1]])
         
-        tft_id = self.getIdString("tft", [filename,sift_step_size,sift_cell_size,sift_n_classes,patch_width,patch_height,patch_hop_size,flatten_dimensions])
-        transformed_aray_id = self.getIdString("transformed_array", [filename,sift_step_size,sift_cell_size,sift_n_classes,patch_width,patch_height,patch_hop_size,flatten_dimensions])
-        #unique_to_class=[filename,sift_step_size,sift_cell_size,sift_n_classes,patch_width,patch_height,patch_hop_size,flatten_dimensions]
+        tft_id_list = [filename,sift_step_size,sift_cell_size,sift_n_classes,patch_width,patch_height,patch_hop_size,flatten_dimensions]
+        transformed_array_id_list = [filename,sift_step_size,sift_cell_size,sift_n_classes,patch_width,patch_height,patch_hop_size,flatten_dimensions]
+
         
+        if tf_idf:
+            tft_id_list.append("tf_idf")
+            transformed_array_id_list.append("tf_idf")
+            
+        tft_id = self.getIdString("tft", tft_id_list)
+        
+        transformed_array_id = self.getIdString("transformed_array", transformed_array_id_list)
+        #unique_to_class=[filename,sift_step_size,sift_cell_size,sift_n_classes,patch_width,patch_height,patch_hop_size,flatten_dimensions]
+        weighter_id = self.getIdString("weighter", tft_id_list)
 
         if os.path.isfile(pickle_path+sift_cal_id+".p"):
             print "loading"
@@ -91,10 +102,12 @@ class Word_finder(object):
         else:
             self.fvd = patch_level.main.feature_vector_descriptor(patch_width, patch_height, patch_hop_size, patch_hop_size, sift_n_classes)
 
-        if os.path.isfile(pickle_path+tft_id+".p") and os.path.isfile(pickle_path+transformed_aray_id+".p") and os.path.isfile(pickle_path+fvd_id+".p"):
+        if (not tf_idf or os.path.isfile(pickle_path+weighter_id+".p")) and os.path.isfile(pickle_path+tft_id+".p") and os.path.isfile(pickle_path+transformed_array_id+".p") and os.path.isfile(pickle_path+fvd_id+".p"):
             print "loading"
             self.tft = pickle.load(open(pickle_path+tft_id +".p","rb"))
-            self.transformed_array = pickle.load(open(pickle_path+transformed_aray_id +".p","rb"))
+            if tf_idf:
+                self.weighter = pickle.load(open(pickle_path+weighter_id+".p", "rb"))
+            self.transformed_array = pickle.load(open(pickle_path+transformed_array_id +".p","rb"))
         else:
             patch_mat = self.fvd.patch_mat(dimensions[1], dimensions[0], labels, sift_step_size)
             pickle.dump(self.fvd,open(pickle_path+fvd_id +".p","wb"))
@@ -105,16 +118,21 @@ class Word_finder(object):
                     pyramid_mat[row,column] = self.fvd.spatial_pyramid(patch_mat[row,column])
                 
             flat_pyramid_mat=np.array([v for i in pyramid_mat for v in i])
+            if tf_idf:
+                self.weighter = Tf_idf(flat_pyramid_mat)
+                flat_pyramid_mat = self.weighter.tf_idf()
+                pickle.dump(self.weighter,open(pickle_path+weighter_id +".p","wb"))
 
             self.tft = TopicFeatureTransform(flatten_dimensions)
             self.tft.estimate(flat_pyramid_mat)
             pickle.dump(self.tft,open(pickle_path+tft_id +".p","wb"))
             self.transformed_array=self.tft.transform(flat_pyramid_mat)
-            pickle.dump(self.transformed_array,open(pickle_path+transformed_aray_id +".p","wb"))
+            pickle.dump(self.transformed_array,open(pickle_path+transformed_array_id +".p","wb"))
         print "done"
         
     
     def search(self,groundtrouth):
+        #print "SEARCHING STARTS"
         self.visualize_progress = True
         distance_to_end_x = self.dimensions[0]- groundtrouth[2]
         distance_to_end_y = self.dimensions[1]- groundtrouth[3]
@@ -131,8 +149,14 @@ class Word_finder(object):
             
         query_sift = self.siftcalc.calculate_visual_words_for_query(query_im, visualize=self.visualize_progress)
         query_pyramid = self.fvd.spatial_pyramid(query_sift)
-        transformed_query = self.tft.transform(np.array(query_pyramid))
-        
+        if self.tf_idf:
+            query_pyramid = self.weighter.tf_idf_query(np.array(query_pyramid))
+            query_pyramid = query_pyramid.reshape(query_pyramid.shape[1],)
+                
+        print query_pyramid.shape
+        transformed_query = self.tft.transform(query_pyramid)
+        print transformed_query.shape
+        print self.transformed_array.shape
         
                 
         distances_array = cdist(self.transformed_array, np.array([transformed_query]), metric=self.metric)
@@ -143,7 +167,7 @@ class Word_finder(object):
         bounds = ((0.5*self.patch_width),(0.5*self.patch_height),(distances_mat.shape[1]*self.patch_hop_size+0.5*self.patch_width),(distances_mat.shape[0]*self.patch_hop_size+0.5*self.patch_height))
 
         vis.visualize_score_mat(self.searchfile, distances_mat, bounds)
-        
+        print (self.patch_width, self.patch_height, self.patch_hop_size, self.searchfile)
         ret = Retrieval(self.patch_width, self.patch_height, self.patch_hop_size, self.searchfile)
         _, non_max_list = ret.non_maximum_suppression(distances_mat)
         coordinates_list = ret.create_list(non_max_list, visualize = self.visualize_progress)

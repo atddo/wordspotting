@@ -21,8 +21,8 @@ class feature_vector_descriptor(object):
     # im_arr: the picture
     # return im_arr: sliced array im_arr
     def get_patch(self, im_arr, row, column):
-        row_patch = row * self.__step_size
-        column_patch = column * self.__step_size
+        row_patch = row * self.__y_step_size
+        column_patch = column * self.__x_step_size
 
         return im_arr[row_patch:row_patch+self.__x_size][column_patch:column_patch+self.__y_size]
 
