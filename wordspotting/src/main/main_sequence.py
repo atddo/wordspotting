@@ -2,12 +2,14 @@ from word_finder import Word_finder
 import collections
 from visualizer import ScoreVisualization
 from patch_level.main import Overlap_Calculator
+from evaluation.evaluator import Evaluator as Eva
+
 
 def roundTo(n,base):
     while n%base != 0:
         n+=1
     return n
-
+"""
 def eval(truth_list, result_list):
     max_overlap_list = []
     for result in result_list:
@@ -19,19 +21,21 @@ def eval(truth_list, result_list):
         
     print "finished!"
     print max_overlap_list
+"""
 # patch_hop_size = n*sift_step_size
 # patch_width = m*sift_step_size
 # patch_height = i*sift_step_size
 
 sift_step_size = 5
 sift_cell_size = 15
-sift_n_classes = 100
+sift_n_classes = 53
 
 patch_height = 75
-patch_hop_size = 10
+patch_hop_size = 15
 metric = 'cosine'
+threshold = 0.2
 
-flatten_dimensions = 100
+flatten_dimensions = 50
 
 visualize_progress=False
 tf_idf = True
@@ -65,9 +69,13 @@ for word in ["they"]:
             my_finder = Word_finder(sift_step_size, sift_cell_size, sift_n_classes, width, query_height, patch_hop_size, flatten_dimensions, searchfile, visualize_progress, tf_idf)
             
             result = my_finder.search(position)
-            eval_list.append(eval(positions[word],result))
+            
+            recall = Eva.calculate_recall(positions[word], result, threshold),
+            precision = Eva.calculate_precision(positions[word], result, threshold),
+            avg_precision = Eva.calculate_avg_precision(positions[word], result, threshold)
+            eval_list.append((recall, precision, avg_precision))
              
-
+        print eval_list
 
     
 

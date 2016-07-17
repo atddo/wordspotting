@@ -33,9 +33,7 @@ class SiftCalculator(object):
         #if visualize:
         #    plt.imshow(im_arr, cmap=cm.get_cmap('Greys_r'))
         #    plt.show()
-        
-        
-        
+       
         # SIFT Deskriptoren berechnen
         frames, desc = vlfeat.vl_dsift(im_arr, step=self.step_size, size=self.cell_size)
     #     pickle_densesift_fn = '2700270-small_dense-%d_sift-%d_descriptors.p' % (step_size, cell_size)
@@ -47,7 +45,7 @@ class SiftCalculator(object):
         
         
         if visualize:
-            draw_descriptor_cells = True
+            draw_descriptor_cells = False
             fig = plt.figure()
             ax = fig.add_subplot(111)
             ax.imshow(im_arr, cmap=cm.get_cmap('Greys_r'))
@@ -58,7 +56,7 @@ class SiftCalculator(object):
             for (x, y), label in zip(frames, labels):
                 color = colormap(label / float(self.n_centroids))
                 circle = Circle((x, y), radius=1, fc=color, ec=color, alpha=1)
-                rect = Rectangle((x - desc_len / 2, y - desc_len / 2), desc_len, desc_len, alpha=0.08, lw=1)
+                #rect = Rectangle((x - desc_len / 2, y - desc_len / 2), desc_len, desc_len, alpha=0.08, lw=1)
                 ax.add_patch(circle)
                 if draw_descriptor_cells:
                     for p_factor in [0.25, 0.5, 0.75]:
@@ -68,7 +66,7 @@ class SiftCalculator(object):
                         line_v = Line2D((x - offset_dyn , x - offset_dyn), (y - offset_stat, y + offset_stat), alpha=0.08, lw=1)
                         ax.add_line(line_h)
                         ax.add_line(line_v)
-                ax.add_patch(rect)
+                #ax.add_patch(rect)
             
             plt.show()
         

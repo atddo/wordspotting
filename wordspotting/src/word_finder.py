@@ -54,8 +54,8 @@ class Word_finder(object):
         self.im_arr = im_arr
         self.dimensions = im_arr.shape
         dimensions = self.dimensions
-        print "Bild-dimensions: "
-        print dimensions
+        # print "Bild-dimensions: "
+        # print dimensions
             
         pickle_path="pickle/"
         sift_cal_id = self.getIdString("siftcal",[sift_step_size, sift_cell_size, sift_n_classes, filename] )
@@ -100,7 +100,7 @@ class Word_finder(object):
             print "loading"
             self.fvd = pickle.load(open(pickle_path+fvd_id +".p","rb"))
         else:
-            self.fvd = patch_level.main.feature_vector_descriptor(patch_width, patch_height, patch_hop_size, patch_hop_size, sift_n_classes)
+            self.fvd = patch_level.main.feature_vector_descriptor(patch_width, patch_height, patch_hop_size, patch_hop_size, sift_n_classes, sift_cell_size)
 
         if (not tf_idf or os.path.isfile(pickle_path+weighter_id+".p")) and os.path.isfile(pickle_path+tft_id+".p") and os.path.isfile(pickle_path+transformed_array_id+".p") and os.path.isfile(pickle_path+fvd_id+".p"):
             print "loading"
@@ -133,7 +133,7 @@ class Word_finder(object):
     
     def search(self,groundtrouth):
         #print "SEARCHING STARTS"
-        self.visualize_progress = True
+        #self.visualize_progress = True
         distance_to_end_x = self.dimensions[0]- groundtrouth[2]
         distance_to_end_y = self.dimensions[1]- groundtrouth[3]
         query = (groundtrouth[0] - (self.patch_width - min(distance_to_end_x, self.patch_width)),
@@ -153,10 +153,7 @@ class Word_finder(object):
             query_pyramid = self.weighter.tf_idf_query(np.array(query_pyramid))
             query_pyramid = query_pyramid.reshape(query_pyramid.shape[1],)
                 
-        print query_pyramid.shape
         transformed_query = self.tft.transform(query_pyramid)
-        print transformed_query.shape
-        print self.transformed_array.shape
         
                 
         distances_array = cdist(self.transformed_array, np.array([transformed_query]), metric=self.metric)
@@ -165,9 +162,9 @@ class Word_finder(object):
         vis = visualizer.ScoreVisualization()
         #score_mat_bounds undefined, tuple (x_min,y_min,x_max,y_max) required
         bounds = ((0.5*self.patch_width),(0.5*self.patch_height),(distances_mat.shape[1]*self.patch_hop_size+0.5*self.patch_width),(distances_mat.shape[0]*self.patch_hop_size+0.5*self.patch_height))
-
-        vis.visualize_score_mat(self.searchfile, distances_mat, bounds)
-        print (self.patch_width, self.patch_height, self.patch_hop_size, self.searchfile)
+        if self.visualize_progress:
+            vis.visualize_score_mat(self.searchfile, distances_mat, bounds)
+            print (self.patch_width, self.patch_height, self.patch_hop_size, self.searchfile)
         ret = Retrieval(self.patch_width, self.patch_height, self.patch_hop_size, self.searchfile)
         _, non_max_list = ret.non_maximum_suppression(distances_mat)
         coordinates_list = ret.create_list(non_max_list, visualize = self.visualize_progress)

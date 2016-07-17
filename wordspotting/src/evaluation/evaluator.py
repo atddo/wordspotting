@@ -4,10 +4,7 @@ import itertools as it
 
 class Evaluator(object):
     
-    def __init__(self):
-        #do nothin'
-        a=0
-    
+     
     @staticmethod
     def getHitlist(truth_list, result_list, threshold):
         max_overlap_list = []
@@ -52,7 +49,7 @@ class Evaluator(object):
         for a in it.izip(hitlist, np.arange(1,len(hitlist)+1)):
             sub_list = hitlist[:a[1]]
             sum += (a[0]*np.sum(sub_list)) / float(a[1])
-            print 'sub_list: %s , %s'%(sub_list,(a[0]*np.sum(sub_list)) / float(a[1]))
+            #print 'sub_list: %s , %s'%(sub_list,(a[0]*np.sum(sub_list)) / float(a[1]))
             
         return sum / float(truth_len)
     

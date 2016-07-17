@@ -9,12 +9,13 @@ class feature_vector_descriptor(object):
     #
     # initializes the patch size and step size
     #
-    def __init__(self, x_size, y_size, x_step_size, y_step_size, n_classes):
+    def __init__(self, x_size, y_size, x_step_size, y_step_size, n_classes, sift_cell_size):
         self.__x_size = x_size
         self.__y_size = y_size
         self.__x_step_size = x_step_size
         self.__y_step_size = y_step_size
         self.__n_classes = n_classes
+        self.__sift_cell_size = sift_cell_size
         
     # gets the patch (row, column)
     # im_arr: the picture
@@ -36,14 +37,14 @@ class feature_vector_descriptor(object):
         for column in range(max_patches_y):
             for row in range(max_patches_x):
 
-
-                y1 = (column*self.__y_step_size)/sift_hop
-                y2 = (column*self.__y_step_size+self.__y_size)/sift_hop
-                x1 = (row*self.__x_step_size)/sift_hop
-                x2 = (row*self.__x_step_size+self.__x_size)/sift_hop
+                rest = self.__sift_cell_size*1.5
+                y1 = (column*self.__y_step_size+rest)/sift_hop
+                y2 = (column*self.__y_step_size+self.__y_size-rest)/sift_hop
+                x1 = (row*self.__x_step_size+rest)/sift_hop
+                x2 = (row*self.__x_step_size+self.__x_size-rest)/sift_hop
                 #print "x1 = %d x2 = %d y1 = %d y2 = %d" %(x1, x2, y1, y2)
                 patch_mat.append(picture_sift_mat[y1:y2+1,x1:x2+1])
-
+                
         self.__shape=(max_patches_y,max_patches_x)
         return np.array(patch_mat).reshape(max_patches_y,max_patches_x)
 
