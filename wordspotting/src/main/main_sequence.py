@@ -27,7 +27,7 @@ def eval(truth_list, result_list):
 # patch_height = i*sift_step_size
 
 sift_step_size = 5
-sift_cell_size = 10
+sift_cell_size = 15
 sift_n_classes = 1500
 
 patch_height = 75
@@ -35,7 +35,7 @@ patch_hop_size = 15
 metric = 'cosine'
 threshold = 0.5
 
-flatten_dimensions = 50
+flatten_dimensions = 200
 
 visualize_progress=False
 tf_idf = True
