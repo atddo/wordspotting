@@ -56,8 +56,13 @@ for line in gts:
     positions[word].append((int(line[0]),int(line[1]),int(line[2]),int(line[3])))
 
 
+count = len(positions)
+counter = 0
+
 eval_list = []
 for word in positions.keys():
+    print "Suche Wort %i von %i" %(counter,count)
+    counter += 1
     if len(positions[word]) > 1:
         for position in positions[word]:
             print "Wort: %s"%word
