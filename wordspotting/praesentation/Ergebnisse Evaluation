@@ -1,0 +1,56 @@
+1. Test: patch_hop_size variieren
+Parameter:
+Sift hop_size: 5
+Sift cell_size: 15
+Sift n_visual_words: 200
+Dimensionen Topic Raum 200
+patch_hop_size: 10, 20, 25
+
+Ergebnisse (in %)
+patch_hop_size	mean_recall	mean_avg_precision	
+10				20			12
+20				22			11,9
+25				19,4		10,3
+
+
+2. Test: Dimensionen Topic Raum und Anzahl Visual Words (n_classes) variiert:
+Sift hop_size: 5
+Sift cell_size: 15
+Sift n_visual_words: 1000, 1500
+Dimension Topic Raum: 200, 500
+patch_hop_size: 20
+
+Ergebnisse (in %)
+n_classes	Dimensionen Topic Raum	mean_recall	mean_avg_precision	
+1000		200						28			28
+1000		500						35,7		35,7
+1500		200						24			28
+1500		500						35,7		35,7
+
+
+
+3. Test: Dimensionsreduktion variiert
+Sift hop_size: 5
+Sift cell_size: 15
+Sift n_visual_words: 1000
+Dimensionen Topic Raum 100, 1000, 1500
+patch_hop_size: 20
+
+
+
+Ergebnisse (in %)
+Dimension Topic Raum		mean_avg_precision	
+100						33				
+1000					18	
+1500					17
+
+Endgültige Konfiguration
+
+Sift hop_size: 5
+Sift cell_size: 15
+Sift n_visual_words: 1000
+Dimensionen Topic Raum: 100
+patch_hop_size: 20
+
+mean_recall	mean_avg_precision
+43,6		34

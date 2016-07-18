@@ -60,28 +60,28 @@ count = len(positions)
 counter = 0
 
 eval_list = []
-for word in ["they", "immediately", "of"]:
+for word in sorted(positions.keys())[90:]:
     print "Suche Wort %i von %i" %(counter,count)
     counter += 1
-    if len(positions[word]) > 1:
-        for position in positions[word]:
-            print "Wort: %s"%word
-            query_width = position[2] - position[0]
-            query_height = position[3] - position[1]
-            if query_height > 3*sift_cell_size:
-                width = roundTo(query_width, 20)
-                #print width
-                #print query_height
-                my_finder = Word_finder(sift_step_size, sift_cell_size, sift_n_classes, width, patch_height, patch_hop_size, flatten_dimensions, searchfile, visualize_progress, tf_idf)
-                
-                result = my_finder.search(position)
-                
-                recall = Eva.calculate_recall(positions[word], result, threshold)
-                precision = Eva.calculate_precision(positions[word], result, threshold)
-                avg_precision = Eva.calculate_avg_precision(positions[word], result, threshold)
-                eval_list.append((recall, precision, avg_precision))
-                print "Wort: %s \nRecall %g \nPrecision %g \navg_precision %g" %(word, recall, precision, avg_precision)
-                Eva.calculate_mean(eval_list)
+
+    for position in positions[word]:
+        print "Wort: %s"%word
+        query_width = position[2] - position[0]
+        query_height = position[3] - position[1]
+        if query_height > 3*sift_cell_size:
+            width = roundTo(query_width, 20)
+            #print width
+            #print query_height
+            my_finder = Word_finder(sift_step_size, sift_cell_size, sift_n_classes, width, patch_height, patch_hop_size, flatten_dimensions, searchfile, visualize_progress, tf_idf)
+            
+            result = my_finder.search(position)
+            
+            recall = Eva.calculate_recall(positions[word], result, threshold)
+            precision = Eva.calculate_precision(positions[word], result, threshold)
+            avg_precision = Eva.calculate_avg_precision(positions[word], result, threshold)
+            eval_list.append((recall, precision, avg_precision))
+            print "Wort: %s \nRecall %g \nPrecision %g \navg_precision %g" %(word, recall, precision, avg_precision)
+            Eva.calculate_mean(eval_list)
 Eva.calculate_mean(eval_list)
 
     
