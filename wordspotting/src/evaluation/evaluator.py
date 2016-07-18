@@ -4,6 +4,19 @@ import itertools as it
 
 class Evaluator(object):
     
+    @staticmethod
+    def calculate_mean(tuple_list):
+        recall = 0
+        precision = 0
+        avg_precision = 0
+        n_ = float(len(tuple_list))
+        for elem in tuple_list:
+            recall += elem[0]
+            precision += elem[1]
+            avg_precision += elem[2]
+        
+        print "Mean Recall %g \nMean Precision %g \nMean Average Precision %g" %(recall/n_, precision/n_, avg_precision/n_)
+            
      
     @staticmethod
     def getHitlist(truth_list, result_list, threshold):
@@ -68,6 +81,8 @@ class Evaluator(object):
     
     
 if __name__ == "__main__":
+    a = [(1,2,3),(1,4,9)]
+    Evaluator.calculate_mean(a)
     print "Test"
     a = [(5,5,10,10),(15,15,14,14),(10,10,14,12)]
     b = [(0,0,6,6), (6,0,7,7), (9,0,11,6), (9,6,11,7), (9,9,11,11), (7,9,8,11), (3,9,6,11), (3,6,6,7),
