@@ -54,7 +54,7 @@ class Tf_idf:
         #print anzahl_pyrs_i_gr_null
         self.log_mat = np.log(np.divide(self.anzahl_pyrs, anzahl_pyrs_i_gr_null))
         #print log_mat
-        
+        self.log_mat[self.log_mat == np.Inf] = 0
         return np.nan_to_num(np.multiply(erster_bruch_mat, self.log_mat))
     
     def tf_idf_query(self, query_mat):
