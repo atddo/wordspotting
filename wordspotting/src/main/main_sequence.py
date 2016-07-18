@@ -27,8 +27,8 @@ def eval(truth_list, result_list):
 # patch_height = i*sift_step_size
 
 sift_step_size = 5
-sift_cell_size = 15
-sift_n_classes = 100
+sift_cell_size = 10
+sift_n_classes = 1500
 
 patch_height = 75
 patch_hop_size = 15
@@ -57,23 +57,22 @@ for line in gts:
 
 
 eval_list = []
-for word in ["they"]:
-    if len( positions[word])>1:
-        for position in positions[word]:
-            query_width = position[2] - position[0]
-            query_height = position[3] - position[1]
-            width = roundTo(query_width, 10)
-            #print width
-            #print query_height
-            my_finder = Word_finder(sift_step_size, sift_cell_size, sift_n_classes, width, patch_height, patch_hop_size, flatten_dimensions, searchfile, visualize_progress, tf_idf)
-            
-            result = my_finder.search(position)
-            
-            recall = Eva.calculate_recall(positions[word], result, threshold)
-            precision = Eva.calculate_precision(positions[word], result, threshold)
-            avg_precision = Eva.calculate_avg_precision(positions[word], result, threshold)
-            eval_list.append((recall, precision, avg_precision))
-            print "Wort: %s \nRecall %g \nPrecision %g \navg_precision %g" %(word, recall, precision, avg_precision)
+for word in positions.keys():
+    for position in positions[word]:
+        query_width = position[2] - position[0]
+        query_height = position[3] - position[1]
+        width = roundTo(query_width, 10)
+        #print width
+        #print query_height
+        my_finder = Word_finder(sift_step_size, sift_cell_size, sift_n_classes, width, patch_height, patch_hop_size, flatten_dimensions, searchfile, visualize_progress, tf_idf)
+        
+        result = my_finder.search(position)
+        
+        recall = Eva.calculate_recall(positions[word], result, threshold)
+        precision = Eva.calculate_precision(positions[word], result, threshold)
+        avg_precision = Eva.calculate_avg_precision(positions[word], result, threshold)
+        eval_list.append((recall, precision, avg_precision))
+        print "Wort: %s \nRecall %g \nPrecision %g \navg_precision %g" %(word, recall, precision, avg_precision)
 Eva.calculate_mean(eval_list)
 
     
