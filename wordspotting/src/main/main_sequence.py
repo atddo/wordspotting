@@ -28,10 +28,10 @@ def eval(truth_list, result_list):
 
 sift_step_size = 5
 sift_cell_size = 15
-sift_n_classes = 1500
+sift_n_classes = 100
 
 patch_height = 75
-patch_hop_size = 15
+patch_hop_size = 20
 metric = 'cosine'
 threshold = 0.5
 
