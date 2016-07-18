@@ -40,7 +40,7 @@ class Tf_idf:
     #                             Gesamtzahl in spat_pyr              Anzahl spat_pyrs die an Index > 0
     def __init__(self, flat_pyramid_mat):
         self.pyramid_mat = flat_pyramid_mat
-        self.anzahl_pyrs = self.pyramid_mat.shape[0]
+        self.anzahl_pyrs = float(self.pyramid_mat.shape[0])
         self.spat_pyr_dim = self.pyramid_mat.shape[1]
         
     def tf_idf(self):
@@ -50,7 +50,7 @@ class Tf_idf:
         erster_bruch_mat =  np.divide(self.pyramid_mat, n_in_pyr)
         #print erster_bruch_mat
         
-        anzahl_pyrs_i_gr_null = np.nansum(np.divide(self.pyramid_mat,self.pyramid_mat), axis = 0, dtype = float)
+        anzahl_pyrs_i_gr_null = np.nansum(np.divide(self.pyramid_mat,self.pyramid_mat), axis = 0)
         #print anzahl_pyrs_i_gr_null
         self.log_mat = np.log(np.divide(self.anzahl_pyrs, anzahl_pyrs_i_gr_null))
         #print log_mat

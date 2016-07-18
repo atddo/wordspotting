@@ -70,8 +70,8 @@ for word in ["they"]:
             
             result = my_finder.search(position)
             
-            recall = Eva.calculate_recall(positions[word], result, threshold),
-            precision = Eva.calculate_precision(positions[word], result, threshold),
+            recall = Eva.calculate_recall(positions[word], result, threshold)
+            precision = Eva.calculate_precision(positions[word], result, threshold)
             avg_precision = Eva.calculate_avg_precision(positions[word], result, threshold)
             eval_list.append((recall, precision, avg_precision))
              
