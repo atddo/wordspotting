@@ -28,14 +28,14 @@ def eval(truth_list, result_list):
 
 sift_step_size = 5
 sift_cell_size = 15
-sift_n_classes = 1500
+sift_n_classes = 1000
 
 patch_height = 75
 patch_hop_size = 20
 metric = 'cosine'
 threshold = 0.5
 
-flatten_dimensions = 200
+flatten_dimensions = 100
 
 visualize_progress=False
 tf_idf = False
@@ -60,7 +60,7 @@ count = len(positions)
 counter = 0
 
 eval_list = []
-for word in positions.keys():
+for word in ["they", "immediately", "of"]:
     print "Suche Wort %i von %i" %(counter,count)
     counter += 1
     if len(positions[word]) > 1:
